@@ -1,4 +1,4 @@
-package uk.gov.hmrc.epayefrontend
+package uk.gov.hmrc.epaye
 
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}

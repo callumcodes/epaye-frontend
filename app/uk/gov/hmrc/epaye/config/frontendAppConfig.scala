@@ -1,4 +1,4 @@
-package uk.gov.hmrc.epayefrontend
+package uk.gov.hmrc.epaye
 
 import play.api.Play.{configuration, current}
 import uk.gov.hmrc.play.config.ServicesConfig

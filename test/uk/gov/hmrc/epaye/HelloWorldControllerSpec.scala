@@ -1,5 +1,5 @@
 
-package uk.gov.hmrc.epayefrontend.controllers
+package uk.gov.hmrc.epaye.controllers
 
 import play.api.http.Status
 import play.api.test.FakeRequest

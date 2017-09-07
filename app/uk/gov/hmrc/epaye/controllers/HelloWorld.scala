@@ -1,4 +1,4 @@
-package uk.gov.hmrc.epayefrontend.controllers
+package uk.gov.hmrc.epaye.controllers
 
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import play.api.mvc._
@@ -11,6 +11,6 @@ object HelloWorld extends HelloWorld
 
 trait HelloWorld extends FrontendController {
   val helloWorld = Action.async { implicit request =>
-		Future.successful(Ok(uk.gov.hmrc.epayefrontend.views.html.helloworld.hello_world()))
+		Future.successful(Ok(uk.gov.hmrc.epaye.views.html.helloworld.hello_world()))
   }
 }

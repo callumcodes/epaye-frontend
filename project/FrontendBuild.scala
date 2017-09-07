@@ -20,7 +20,9 @@ object FrontendBuild extends Build with MicroService {
     "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
     "uk.gov.hmrc" %% "govuk-template" % "5.7.0",
     "uk.gov.hmrc" %% "play-health" % "2.1.0",
-    "uk.gov.hmrc" %% "play-ui" % "7.5.0"
+    "uk.gov.hmrc" %% "play-ui" % "7.5.0",
+    "uk.gov.hmrc" %% "play-language" % "3.3.0"
+
   )
 
   def test(scope: String = "test") = Seq(

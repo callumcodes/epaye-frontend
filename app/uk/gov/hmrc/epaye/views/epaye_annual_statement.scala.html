@@ -1,0 +1,99 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.model.domain.{TaxMonth, TaxYear, UserMasterData}
+@import _root_.model.json.AnnualStatement
+@import _root_.services.AnnualStatementError
+@import connector.UserProfile
+@import org.joda.time.LocalDate
+@import views.html.epaye.partials.epaye_annual_statement_sidebar
+@import views.html.epaye.partials.annual_statement.tax_code_notices
+@import views.html.helpers.EpayeHelper
+@import org.joda.time.DateTimeFieldType
+@import scala._
+
+
+@(
+    annualStatementResponse: Either[AnnualStatementError, AnnualStatement],
+    taxYear: TaxYear,
+    userMasterDataOpt: Option[UserMasterData],
+    currentTaxMonth: Option[TaxMonth],
+    today: LocalDate
+)(
+    implicit profile: UserProfile,
+    authContext: uk.gov.hmrc.play.frontend.auth.AuthContext,
+    request: Request[_],
+    messages: Messages,
+    lang: Lang
+)
+
+    @isCurrent(year: TaxYear) = @{
+    TaxYear(today.get(DateTimeFieldType.year())) == year
+    }
+
+    @hasToBeShown(year: Int) = @{
+    TaxYear(year) != taxYear
+    }
+
+@main_template(
+    title = Messages("epaye.annual.statements.title"),
+    sidebarLinks = Some(epaye_annual_statement_sidebar(userMasterDataOpt)),
+    warnings = None,
+    sidebarClasses = Some("sidebar"),
+    bodyClasses = Some("business-tax"),
+    betaBanner = profile.epayeRelease3
+) {
+
+    <h2 class="heading-medium ">
+        @if(isCurrent(taxYear)){
+            @Messages("epaye.annual.statements.current_tax_year")
+        }else {
+            @Messages("epaye.annual.statement.taxyear", taxYear.yearFrom.toString, taxYear.yearTo.toString) @Messages("epaye.annual.statement.taxyear.text")
+        }
+    </h2>
+
+    @EpayeHelper.renderAnnualStatementTable(annualStatementResponse, taxYear, currentTaxMonth, today)
+
+    @if(userMasterDataOpt.flatMap(_.yearRegistered).isDefined) {
+    <section id="prev-statements">
+        <h2 class="heading-small ">
+            @if(isCurrent(taxYear)){
+            @Messages("epaye.annual.statement.previous_years_statements")
+            } else {
+            @Messages("epaye.annual.statement.otherstatemens")
+            }
+        </h2>
+        <ul>
+            @for(year <- Range(TaxYear(today.get(DateTimeFieldType.year())).yearFrom, userMasterDataOpt.flatMap(_.yearRegistered).get.yearFrom -1 , -1)){
+            @if(hasToBeShown(year)){
+            <li>
+                @if(isCurrent(TaxYear(year))){
+                <span>@Messages("epaye.annual.statement.currenttaxyear.text")</span>
+                } else {
+                <span>@Messages("epaye.annual.statement.taxyear.text")</span>
+                }
+                <a href="@controllers.routes.EpayeAnnualStatementController.statement(TaxYear(year))">
+                    <span>@Messages("epaye.annual.statement.text", TaxYear(year).yearFrom.toString, TaxYear(year).yearTo.toString )</span>
+                </a>
+            </li>
+            }
+            }
+        </ul>
+    </section>
+    }
+
+    @tax_code_notices()
+}

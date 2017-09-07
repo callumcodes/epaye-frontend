@@ -1,29 +1,112 @@
-@(title: String,
-  sidebarLinks: Option[Html] = None,
-  contentHeader: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  mainClass: Option[String] = None,
-  scriptElem: Option[Html] = None)(mainContent: Html)(implicit request : Request[_], messages: Messages)
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
+@(
+    title: String,
+    sidebarLinks: Option[Html] = None,
+    warnings: Option[Html] = None,
+    bodyClasses: Option[String] = None,
+    mainClass: Option[String] = None,
+    sidebarClasses: Option[String] = None,
+    analyticsAdditionalJs: Option[Html] = None,
+    scriptElem: Option[Html] = None,
+    afterHeader: Option[Html] = None,
+    includeHMRCBranding: Boolean = false,
+    betaBanner: Boolean = false,
+    breadCrumbs: Html = Html("")
+)(
+    mainContent: Html
+)(
+    implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile,
+    authContext: uk.gov.hmrc.play.frontend.auth.AuthContext,
+    request : Request[_], lang : Lang,
+    messages: Messages
+)
+
+@import uk.gov.hmrc.epaye.views.helpers._
+@import uk.gov.hmrc.epaye.views.helpers
 @import uk.gov.hmrc.play.views.html.layouts
 
-
-@serviceInfoContent = {}
-
-@sidebar = {
-    @if(sidebarLinks.isDefined) {
-        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
+@serviceInfoContent = {
+    @if(!includeHMRCBranding) {
+        <a id="service-info-home-link" class="service-info__item service-info__left font-xsmall button button--link button--link-table button--small soft-half--sides" data-journey-click="Header:Click:Home" href="@helpers.businessTaxAccountUrl">@Messages("bt.home")</a>
+        @breadCrumbs
+        <ul id="service-info-list" class="service-info__item service-info__right list--collapse">
+            @Option(userProfile).map { profile =>
+                <li class="list__item">
+                    <span id="service-info-user-name" class="bold-xsmall">@profile.userDetail.name</span>
+                </li>
+            }
+            <li class="list__item soft--left">
+                <a href="@helpers.businessTaxAccountUrlManage" data-journey-click="Header:Click:ManageAccount">@Messages("bt.manage.account")</a>
+            </li>
+            <li class="list__item soft--left">
+                <a href="@helpers.businessTaxAccountUrlMessages" data-journey-click="Header:Click:Messages">@Messages("bt.messages.heading")</a>
+            </li>
+        </ul>
     }
 }
 
+@sidebar = {
 
-@govuk_wrapper(appConfig = uk.gov.hmrc.epayefrontend.FrontendAppConfig,
-               title = title,
+    @if(sidebarLinks.isDefined) {
+      @if(sidebarClasses.isDefined) {
+        @layouts.sidebar(sidebarLinks.get, Some(s"sidebar ${sidebarClasses.get}"))
+      } else {
+        @layouts.sidebar(sidebarLinks.get, Some("sidebar"))
+      }
+    }
+}
+
+@contentHeader = {
+    <header>
+    <h1 id="page-title" class="bold-large flush--top">@title</h1>
+    </header>
+    @warnings
+}
+
+@beta_banner = {
+    @*@if(betaBanner) {
+        <div class="beta-banner beta-banner&#45;&#45;border">
+            <p><strong class="phase-tag">@Messages("epaye.feedback.beta")</strong>
+                <span>
+                    @Html(Messages(
+                        "epaye.feedback.this_is_a_trial_service",
+                        s"""<a id="feedback-link" href="${routes.EpayeFeedbackController.getFeedbackPage(EpayeFeedbackSurveys.BetaSurvey)}" data-sso="false" data-journey-click="other-global:Click:Feedback">""",
+                        """</a>"""
+                    ))
+                </span>
+            </p>
+        </div>
+    } else {
+        @HtmlFormat.empty
+    }*@
+}
+
+@govuk_wrapper(appConfig = uk.gov.hmrc.epaye.FrontendAppConfig,
+               title = pageTitle(title),
                mainClass = mainClass,
                bodyClasses = bodyClasses,
                sidebar = sidebar,
-               contentHeader = contentHeader,
-               mainContent = layouts.article(mainContent),
+               contentHeader = Some(contentHeader),
+               mainContent = mainContent,
                serviceInfoContent = serviceInfoContent,
-               scriptElem = scriptElem
+               scriptElem = scriptElem,
+               analyticsAdditionalJs = analyticsAdditionalJs,
+               afterHeader = afterHeader,
+               includeHMRCBranding = includeHMRCBranding,
+               betaBanner = beta_banner
 )

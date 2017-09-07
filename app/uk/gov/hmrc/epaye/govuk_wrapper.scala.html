@@ -1,73 +1,109 @@
-@(appConfig: uk.gov.hmrc.epayefrontend.AppConfig,
-  title: String,
-  mainClass: Option[String] = None,
-  mainDataAttributes: Option[Html] = None,
-  bodyClasses: Option[String] = None,
-  sidebar: Html = HtmlFormat.empty,
-  contentHeader: Option[Html] = None,
-  mainContent: Html = HtmlFormat.empty,
-  serviceInfoContent: Html = HtmlFormat.empty,
-  scriptElem: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
-@import layouts.{govuk_template => hmrcGovUkTemplate}
-@import uk.gov.hmrc.play.views.html.{layouts => uiLayouts}
-@import uk.gov.hmrc.play.views.html.{helpers => uiHelpers}
+@import uk.gov.hmrc.epaye.config.FormPartialProvider
+@(appConfig: uk.gov.hmrc.epaye.AppConfig,
+title: String,
+mainClass: Option[String] = None,
+mainDataAttributes: Option[Html] = None,
+bodyClasses: Option[String] = None,
+sidebar: Html = HtmlFormat.empty,
+contentHeader: Option[Html] = None,
+mainContent: Html = HtmlFormat.empty,
+serviceInfoContent: Html = HtmlFormat.empty,
+scriptElem: Option[Html] = None,
+analyticsAdditionalJs: Option[Html] = None,
+afterHeader: Option[Html] = None,
+showHeaderNavLinks : Boolean = true,
+includeHMRCBranding: Boolean = true,
+betaBanner: Html = HtmlFormat.empty
+)(implicit request: Request[_], lang : Lang, messages: Messages)
+
+@import views.html.layouts.govuk_template
+@import uk.gov.hmrc.play.views.html.layouts
+@import uk.gov.hmrc.play.views.html.helpers.reportAProblemLink
+@import uk.gov.hmrc.epaye.views.helpers
+
+@import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+@import scala.concurrent.ExecutionContext.Implicits.global
+
 
 @head = {
-    @uiLayouts.head(
-      linkElem = None,
-      headScripts = None)
-    <meta name="format-detection" content="telephone=no" />
+@layouts.head(
+linkElem = None,
+headScripts = None)
+<meta name="format-detection" content="telephone=no" />
 }
 
-@headerNavLinks = {}
+@headerNavLinks = {
+<li><a id="logOutNavHref" href="@helpers.signoutUrl"
+       data-journey-click="primary-navigation:Click:Sign out">@Messages("bt.message.signout")</a></li>
+}
 
 @insideHeader = {
-    @uiLayouts.header_nav(
-      navTitle = Some("epaye-frontend"),
-      navTitleLink = None,
-      showBetaLink = false,
-      navLinks = Some(headerNavLinks))
+@layouts.header_nav(
+navTitle = if(showHeaderNavLinks) Some(Messages("bt.application.title")) else None,
+navTitleLink = None,
+showBetaLink = false,
+navLinks = if(showHeaderNavLinks) Some(headerNavLinks) else None)
 }
-
-@afterHeader = {}
 
 @bodyEnd = {
-    @uiLayouts.footer(
-      analyticsToken = Some(appConfig.analyticsToken),
-      analyticsHost = appConfig.analyticsHost,
-      ssoUrl = None,
-      scriptElem = scriptElem,
-      gaCalls = None)
+@layouts.footer(
+analyticsToken = Some(appConfig.analyticsToken),
+analyticsHost = appConfig.analyticsHost,
+ssoUrl = Some(appConfig.ssoUrl),
+scriptElem = scriptElem,
+gaCalls = None,
+analyticsAdditionalJs = analyticsAdditionalJs)
+
 }
 
-@footerTop = {}
-@footerLinks = {}
+@footerTop() = {}
 
 @serviceInfo = {
-    @uiLayouts.serviceInfo(
-      betaBanner = HtmlFormat.empty,
-      includeGridWrapper = false,
-      serviceInfoContent = Some(serviceInfoContent))
+@layouts.serviceInfo(
+betaBanner = betaBanner,
+includeGridWrapper = false,
+serviceInfoContent = Some(serviceInfoContent),
+includeHMRCBranding = includeHMRCBranding)
 }
 
-@mainContentHeader = {
-    @if(contentHeader.isDefined) {
-        @uiLayouts.main_content_header(contentHeader = contentHeader.get)
-    }
+@headerAndMainContent = {
+@contentHeader.getOrElse(HtmlFormat.empty)
+@mainContent
 }
-
-@getHelpForm = @{uiHelpers.reportAProblemLink(appConfig.reportAProblemPartialUrl, appConfig.reportAProblemNonJSUrl)}
 
 @content = {
-    @uiLayouts.main_content(
-      article = mainContent,
-      mainClass = mainClass,
-      mainDataAttributes = mainDataAttributes,
-      mainContentHeader = mainContentHeader,
-      serviceInfo = serviceInfo,
-      getHelpForm = getHelpForm,
-      sidebar = sidebar)
+<main id="wrapper" role="main" @mainClass.map { mainClassVal => class="@mainClassVal" } @mainDataAttributes>
+
+    <div id="content">
+
+        <div class="centered-content section soft--ends">
+            @serviceInfo
+        </div>
+
+        @sidebar
+
+        @layouts.article(headerAndMainContent)
+
+        @FormPartialProvider.getPartialContent(appConfig.reportAProblemPartialUrl)
+
+    </div>
+</main>
 }
 
-@hmrcGovUkTemplate(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader, footerTop, Some(uiLayouts.footer_links()), true)(content)
+@govuk_template(Some(title), bodyClasses)(head, bodyEnd, insideHeader, afterHeader.getOrElse(HtmlFormat.empty), footerTop, Some(layouts.footer_links(Some(uk.gov.hmrc.epaye.views.html.partials.language_selection(appConfig.enableLanguageSwitching)))), true)(content)

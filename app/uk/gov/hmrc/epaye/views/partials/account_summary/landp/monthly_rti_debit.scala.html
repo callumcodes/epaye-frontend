@@ -1,0 +1,71 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import model.domain.{RtiMonthDebit, TaxMonth, TaxYear}
+@import views.html.helpers.DateFormatting.formatDayMonthYear
+@import uk.gov.hmrc.play.views.formatting.Money.pounds
+@import _root_.views.html.helpers.HtmlHelper._
+
+@(debit: RtiMonthDebit, index: Int)(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile,  messages: Messages)
+@hasAppLevy = @{debit.amountBreakdown.appLevy > 0}
+@hasInterest = @{debit.amountBreakdown.interest > 0}
+@interestMessageKey = @{ if (hasAppLevy && !userProfile.epayeRelease4) "epaye.rti.monthly.interest.also.message" else "epaye.rti.monthly.interest.message" }
+
+<li id = "epaye-rti-charges-@index" class="section__li tax-grouping">
+    <div class="soft--bottom soft--right flush--bottom">
+        <div class="grid-layout grid-layout--stacked flush--bottom flush--left spacing--bottom">
+            <div class="grid-layout__column grid-layout__column--3-4 flush--bottom">
+                <p class="flush--bottom alert alert--borderless soft--left soft-half--ends panel">
+                    <strong>
+                        @Html(Messages("epaye.rti.monthly.debit.message", pounds(debit.amount, 2), debit.taxMonth))
+                    </strong>
+                    -
+                    <a href="@controllers.routes.EpayeMonthlyStatementController.statement(TaxYear(debit.taxYear), TaxMonth(debit.taxMonth))">
+                        @Html(Messages("epaye.see_breakdown"))
+                    </a>
+                </p>
+
+                @if(hasAppLevy && !userProfile.epayeRelease4) {
+                    <p class="flush--bottom">
+                        @Html(Messages("epaye.rti.monthly.applevy.message", pounds(debit.amountBreakdown.appLevy, 2).strong))
+                    </p>
+                }
+
+                @if(hasInterest) {
+                    <p class="flush--bottom">
+                        @Html(Messages(interestMessageKey, pounds(debit.amountBreakdown.interest, 2).strong))
+                    </p>
+                }
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-4">
+                <p class="flush--bottom alert soft-half--ends soft--right">
+                    <strong class="bold-xsmall">
+                        @Messages("epaye.rti.monthly.debit.duedate", formatDayMonthYear(debit.dueDate))
+                    </strong>
+                </p>
+            </div>
+        </div>
+        <a
+            href="/pay-online/epaye/make-a-payment?mode=bta"
+            data-journey-click="EpayeRtiMonthDebit:Click:PayThisBill"
+            class="button--secondary flush--top">
+                @Html(Messages("epaye.rti.monthly.debit.action"))
+                @partials.open_in_portal_window()
+        </a>
+    </div>
+</li>
+
+

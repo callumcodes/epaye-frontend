@@ -1,0 +1,44 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.models.domain._
+@import uk.gov.hmrc.epaye.views.html.charges
+@import uk.gov.hmrc.epaye.views.html.partials
+@import uk.gov.hmrc.play.views.formatting.Money.pounds
+
+@(interest: InterestOnEarlierYearUpdate)(implicit m: Messages)
+
+@title = {
+    @Html(Messages("epaye.nonRti.pound_interest", pounds(interest.outstanding, 2)))
+}
+@content = {
+    <p class="flush--bottom">
+        @Messages(
+            s"epaye.nonRti.late_payment_of_earlier_year_update",
+            TaxYear.fromTaxPeriod(interest.taxPeriod).yearFrom.toString,
+            TaxYear.fromTaxPeriod(interest.taxPeriod).yearTo.toString
+        )</p>
+}
+
+@charges.interest(
+    title,
+    content,
+    interest.dueDate,
+    partials.payInterestOnBillButton(interest.reference)
+)
+
+
+

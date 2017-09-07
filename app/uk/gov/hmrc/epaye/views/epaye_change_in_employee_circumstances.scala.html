@@ -1,0 +1,66 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import org.joda.time.DateTime
+@import uk.gov.hmrc.epaye.connectors.UserProfile
+@import uk.gov.hmrc.epaye.services.EpayeLandpModel
+@import uk.gov.hmrc.epaye.html._
+@import uk.gov.hmrc.epaye.views.helpers._
+
+@()(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang: Lang, messages: Messages)
+
+
+@main_template(
+    title=Messages("epaye.subpage.change.circumstances.heading"),
+    sidebarLinks = None,
+    warnings = None,
+    sidebarClasses = Some("sidebar"),
+    bodyClasses=Some("business-tax")
+) {
+
+    <div id="employee-circumstances-one" class="subsection--wide">
+        <h2>@Messages("epaye.subpage.parental.leave.heading")</h2>
+        <p>@Html(Messages("epaye.subpage.parental.leave.1","<a id=\"paid-parental-leave\" href=\"" + govUrl("epaye.matPatCalculator") + "\" " +
+                "data-journey-click=\"EpayeSubpage:click:PaidPaternalLeave\">","</a>"))</p>
+        <p>@Html(Messages("epaye.subpage.parental.leave.2","<a id=\"reclaim-payments\" href=\"" + govUrl("epaye.reclaimPayments") + "\" " +
+                "data-journey-click=\"EpayeSubpage:click:ReclaimPayments\">","</a>"))</p>
+        <p>@Html(Messages("epaye.subpage.parental.leave.3","<a id=\"ask-hmrc-refund\" href=\"/forms/form/financial-help-with-statutory-payments/new\" " +
+                "data-journey-click=\"EpayeSubpage:click:AskHmrcRefundParental\">","</a>"))</p>
+    </div>
+
+    <div id="employee-circumstances-two" class="subsection--wide">
+        <h2>@Messages("epaye.subpage.send.employees.eueea.heading")</h2>
+        <p>@Html(Messages("epaye.subpage.send.employees.eueea.1","<a id=\"form-ca3821\" href=\"/forms/form/Sending-employees-to-work-abroad/new\" " +
+                "data-journey-click=\"EpayeSubpage:click:FormCa3821\">","</a>"))</p>
+        <p>@Html(Messages("epaye.subpage.send.employees.eueea.2","<a id=\"form-ca3822\" href=\"/forms/form/Employees-going-to-work-in-EEA/new\" " +
+                "data-journey-click=\"EpayeSubpage:click:FormCa3822\">","</a>"))</p>
+        <p>@Html(Messages("epaye.subpage.send.employees.eueea.3",
+            "<a id=\"euro-union\" href=\"" + govUrl("euEea") + "\" data-journey-click=\"EpayeSubpage:click:EU\">",
+            "</a>",
+            "<a id=\"euro-economic\" href=\"" + govUrl("euEea") + "\" data-journey-click=\"EpayeSubpage:click:EEA\">"))</p>
+    </div>
+
+
+    <div id="employee-circumstances-three" class="subsection--wide">
+        <h2>@Messages("epaye.subpage.hmrc.employee.refund.heading")</h2>
+        <p>@Messages("epaye.subpage.hmrc.employee.refund.1")</p>
+        <p>@Messages("epaye.subpage.hmrc.employee.refund.2")</p>
+        <p>@Html(Messages("epaye.subpage.hmrc.employee.refund.3","<a id=\"form-epaye-refund\" href=\"/forms/form/Application-for-funding-a-tax-refund-for-an-employee/new\" " +
+                "data-journey-click=\"EpayeSubpage:click:AskHmrcRefundEpaye\">","</a>"))</p>
+    </div>
+}
+
+

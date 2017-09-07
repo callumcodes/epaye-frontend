@@ -1,3 +1,27 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.epayefrontend.controllers.HelloWorld.helloWorld
+
+GET         /switch-to-welsh                                                         uk.gov.hmrc.epaye.controllers.LanguageController.switchToWelsh
+GET         /switch-to-english                                                       uk.gov.hmrc.epaye.controllers.LanguageController.switchToEnglish
+
+
+GET         /epaye                                                  uk.gov.hmrc.epaye.controllers.EpayeController.subpage()
+GET         /epaye/end-of-year                                      uk.gov.hmrc.epaye.controllers.EpayeController.endOfYear
+GET         /epaye/get-started                                      uk.gov.hmrc.epaye.controllers.EpayeController.getStarted
+GET         /epaye/get-started/tax-month-codes                      uk.gov.hmrc.epaye.controllers.EpayeController.taxMonthCodes
+GET         /epaye/messages                                         uk.gov.hmrc.epaye.controllers.EpayeController.messages()
+GET         /epaye/benefits-and-expenses                            uk.gov.hmrc.epaye.controllers.EpayeController.benefitsAndExpenses()
+GET         /epaye/remove                                           uk.gov.hmrc.epaye.controllers.EpayeController.remove()
+GET         /epaye/pay-charge/:xref                                 uk.gov.hmrc.epaye.controllers.EpayeController.payCharge(xref)
+GET         /epaye/pay-charge/:xref/bank-transfer                   uk.gov.hmrc.epaye.controllers.EpayeController.payChargeBankTransfer(xref)
+GET         /epaye/breakdown-no-levy                                uk.gov.hmrc.epaye.controllers.EpayeController.breakdownNoLevy()
+GET         /epaye/change-employee-circumstances                    uk.gov.hmrc.epaye.controllers.EpayeController.changeInEmployeeCircumstances()
+#GET         /epaye/statements/:taxYear                              @uk.gov.hmrc.epaye.controllers.EpayeAnnualStatementController.statement(taxYear: model.domain.TaxYear)
+#GET         /epaye/statements/:taxYear/:taxMonth                    @uk.gov.hmrc.epaye.controllers.EpayeMonthlyStatementController.statement(taxYear: model.domain.TaxYear, taxMonth: model.domain.TaxMonth)
+#GET         /epaye/feedback/:surveyName                             @uk.gov.hmrc.epaye.controllers.EpayeFeedbackController.getFeedbackPage(surveyName: String)
+#POST        /epaye/feedback/:surveyName                             @uk.gov.hmrc.epaye.controllers.EpayeFeedbackController.submitFeedback(surveyName: String)
+#GET         /epaye/feedback/thank-you/                              @uk.gov.hmrc.epaye.controllers.EpayeFeedbackController.thankYou()
+
+
+
+GET         /help/*page                                                             uk.gov.hmrc.epaye.controllers.HelpAndContactController.helpAndContactWithSubpage(page)

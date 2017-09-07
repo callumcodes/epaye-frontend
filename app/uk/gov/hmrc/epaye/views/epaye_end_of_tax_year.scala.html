@@ -1,0 +1,122 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.html._
+@import uk.gov.hmrc.epaye.views.helpers._
+
+@()(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang : Lang, messages: Messages)
+
+@sidebarLinks = {
+    <section class="section--blue-top">
+        <nav role="navigation">
+            <div id="video-links" class="subsection flush--top">
+                <h3>@Messages("video.guides")</h3>
+                <ul class="section__ul--link-list sidebar__list">
+                    <li class="sidebar__list-item font-xsmall"><a id="issue-p60s-video" href=@youTubeUrl("epaye.issueP60s")
+                    data-journey-click="EpayeEndOfYear:click:IssueP60sVideo">@Messages("epaye.issue.p60s.video")</a></li>
+                    <li class="sidebar__list-item font-xsmall"><a id="send-last-paye-report" href=@youTubeUrl("epaye.sendLastReport")
+                    data-journey-click="EpayeEndOfYear:click:LastPayeReportVideo">@Messages("epaye.last.paye.report.video")</a></li>
+                </ul>
+            </div>
+        </nav>
+    </section>
+}
+
+@main_template(title = Messages("epaye.end.of.tax.year.title"), bodyClasses = Some("business-tax"), sidebarLinks = Some(sidebarLinks)) {
+    <div>
+        <table>
+            <thead>
+                <th>@Messages("epaye.end.of.year.table.heading.1")</th>
+                <th>@Messages("epaye.end.of.year.table.heading.2")</th>
+            </thead>
+            <tr>
+                <td><a id="final-payroll" href=@govUrl("epaye.sendFinalPayroll")
+                data-journey-click="EpayeEndOfYear:click:FinalPayroll">@Messages("epaye.end.of.year.table.row.1.1")</a></td>
+                <td>@Messages("epaye.end.of.year.table.row.1.2")</td>
+            </tr>
+            <tr>
+                <td><a id="payroll-records" href=@govUrl("epaye.payrollRecords")
+                data-journey-click="EpayeEndOfYear:click:PayrollRecords">@Messages("epaye.end.of.year.table.row.2.1")</a></td>
+                <td>@Messages("epaye.end.of.year.table.row.2.2")</td>
+            </tr>
+            <tr>
+                <td><a id="payroll-software" href=@govUrl("epaye.updatePayrollSoftware")
+                data-journey-click="EpayeEndOfYear:click:PayrollSoftware">@Messages("epaye.end.of.year.table.row.3.1")</a></td>
+                <td>@Messages("epaye.end.of.year.table.row.3.2")</td>
+            </tr>
+            <tr>
+                <td><a id="employees-p60" href=@govUrl("epaye.giveP60Form")
+                data-journey-click="EpayeEndOfYear:click:P60">@Messages("epaye.end.of.year.table.row.4.1")</a></td>
+                <td>@Messages("epaye.end.of.year.table.row.4.2")</td>
+            </tr>
+            <tr>
+                <td><a id="expenses-benefits" href="@uk.gov.hmrc.epaye.controllers.routes.EpayeController.benefitsAndExpenses"
+                data-journey-click="EpayeEndOfYear:click:ReportExpensesAndBenefits">@Messages("epaye.end.of.year.table.row.5.1")</a></td>
+                <td>@Messages("epaye.end.of.year.table.row.5.2")</td>
+            </tr>
+        </table>
+        <p><a id="check-tax-code-notices" href="@uk.gov.hmrc.epaye.controllers.routes.EpayeController.messages"
+            data-journey-click="EpayeEndOfYear:click:CheckTaxCodeNotices">@Html(Messages("epaye.end.of.year.check.tax.code", "</a>"))</p>
+    </div>
+
+    <div>
+        <h3>@Messages("epaye.end.of.year.refunds.corrections.heading")</h3>
+        <p>@Html(Messages("epaye.end.of.year.refunds.corrections.1",
+            "<a id=\"claim-paye-refund\" href=\"" + uk.gov.hmrc.epaye.controllers.routes.HelpAndContactController.helpAndContactWithSubpage("epaye/paye-refund") + "\" data-journey-click=\"EpayeEndOfYear:click:ClaimPayeRefund\">",
+            "</a>",
+            "<a id=\"claim-cis-refund\" href=\"" + uk.gov.hmrc.epaye.controllers.routes.HelpAndContactController.helpAndContactWithSubpage("epaye/cis-refund") + "\" data-journey-click=\"EpayeEndOfYear:click:ClaimCisRefund\">",
+            "</a>"))</p>
+        <p>@Html(Messages("epaye.end.of.year.refunds.corrections.2",
+            "<a id=\"correct-submission\" href=\"" + uk.gov.hmrc.epaye.controllers.routes.HelpAndContactController.helpAndContactWithSubpage("epaye/correct-submissions") +
+                    "\" data-journey-click=\"EpayeEndOfYear:click:CorrectASubmission\">",
+            "</a>"))</p>
+    </div>
+    <div>
+        <h3>@Messages("epaye.end.of.year.consider.next.year.heading")</h3>
+        <details>
+            <summary class="underline">
+                <span>@Messages("epaye.end.of.year.consider.next.year.pension.heading")</span>
+            </summary>
+            <div class="panel-indent font-xsmall">
+                <p>@Messages("epaye.end.of.year.consider.next.year.pension.1")</p>
+                <p><a id="pension-obligations" href=@govUrl("epaye.pensionObligations")
+                data-journey-click="EpayeEndOfYear:click:PensionObligations">@Messages("epaye.end.of.year.consider.next.year.pension.2")</a></p>
+            </div>
+        </details>
+        <details>
+            <summary class="underline">
+                <span>@Messages("epaye.end.of.year.consider.next.year.allowance.heading")</span>
+            </summary>
+            <div class="panel-indent font-xsmall">
+                <p>@Messages("epaye.end.of.year.consider.next.year.allowance.1")</p>
+                <p><a id="employment-allowance" href=@govUrl("epaye.employmentAllowance")
+                data-journey-click="EpayeEndOfYear:click:EmploymentAllowance">@Messages("epaye.end.of.year.consider.next.year.allowance.2")</a></p>
+            </div>
+        </details>
+        <details>
+            <summary class="underline">
+                <span>@Messages("epaye.end.of.year.consider.next.year.benefits.heading")</span>
+            </summary>
+            <div class="panel-indent font-xsmall">
+                <p>@Messages("epaye.end.of.year.consider.next.year.benefits.1")</p>
+                <p>@Messages("epaye.end.of.year.consider.next.year.benefits.2")</p>
+                <p><a id="benefits-in-kind" href=@govUrl("epaye.pbik")
+                data-journey-click="EpayeEndOfYear:click:BenefitsInKind">@Messages("epaye.end.of.year.consider.next.year.benefits.3")</a></p>
+            </div>
+        </details>
+    </div>
+
+}

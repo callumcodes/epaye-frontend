@@ -1,0 +1,35 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.model.domain.UserMasterData
+
+@(userMasterDataOpt: Option[UserMasterData])(implicit messages: Messages)
+
+@userMasterDataOpt.map { userMasterData =>
+    <div id="user-references">
+        <h3 class="heading-small" id="reference_title">@Messages("epaye.homepage.sidebar.reference_title")</h3>
+        <ul>
+            <li class="font-xsmall" id="epaye_sidebar_empref">
+            @Messages("epaye.homepage.sidebar.employer_epaye_reference_title", userMasterData.empRef)
+            </li>
+            @userMasterData.accountOfficeReference.map { accountOfficeReference =>
+                <li class="font-xsmall" id="accounts_office_reference">
+                    @Messages("epaye.homepage.sidebar.accounts_office_reference_title", accountOfficeReference)
+                </li>
+            }
+        </ul>
+    </div>
+}

@@ -1,0 +1,110 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.views.helpers._
+@import uk.gov.hmrc.epaye.html._
+@()(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang : Lang, messages: Messages)
+
+
+@sidebarLinks = {
+    <section class="section--blue-top">
+        <nav role="navigation">
+            <div id="video-links" class="subsection flush--top">
+                <h3>@Messages("video.guides")</h3>
+                <ul class="section__ul--link-list sidebar__list">
+                    <li class="sidebar__list-item font-xsmall"><a id="new-employers" href=@youTubeUrl("epaye.newEmployers") data-journey-click="EpayeGetStarted:click:NewEmployersVideo">@Messages("epaye.new.employers.video")</a></li>
+                    <li class="sidebar__list-item font-xsmall"><a id="payroll-software-video" href=@youTubeUrl("epaye.payrollSoftware") data-journey-click="EpayeGetStarted:click:PayrollSoftwareVideo">@Messages("epaye.payroll.software.video")</a></li>
+                    <li class="sidebar__list-item font-xsmall"><a id="when-to-pay" href=@youTubeUrl("epaye.whenToPay") data-journey-click="EpayeGetStarted:click:WhenToPayVideo">@Messages("epaye.when.to.pay.video")
+                    </a></li>
+                </ul>
+            </div>
+        </nav>
+    </section>
+}
+
+@afterHeader = {
+    @uk.gov.hmrc.epaye.views.html.survey_banner("video", uk.gov.hmrc.epaye.FrontendAppConfig.videoSurveyBannerUrl, "EpayeGetStarted")
+}
+
+@main_template(title = Messages("epaye.get.started.title"), bodyClasses = Some("business-tax"), sidebarLinks = Some(sidebarLinks), afterHeader = Some(afterHeader)) {
+    <div class="subsection">
+        <h2>@Messages("epaye.get.started.payroll.software.heading")</h2>
+        <p>@Messages("epaye.get.started.payroll.software.details.1")</p>
+        <p>@Messages("epaye.get.started.payroll.software.details.2")</p>
+        <ul class="bullets">
+            <li>@Messages("epaye.get.started.payroll.software.details.3")</li>
+            <li>@Messages("epaye.get.started.payroll.software.details.4")</li>
+        </ul>
+        <p>@Messages("epaye.get.started.payroll.software.details.5")</p>
+        <ul class="bullets">
+            <li>@Html(Messages("epaye.get.started.payroll.software.details.6",
+                "<a id=\"basic-paye-tools\" href=\"" + govUrl("epaye.payeTools") + "\" data-journey-click=\"EpayeGetStarted:click:Bptl\">", "</a>"))</li>
+            <li><a id="payroll-software" href=@govUrl("epaye.payrollSoftware") data-journey-click="EpayeGetStarted:click:CommercialPayrollSoftware">
+            @Html(Messages("epaye.get.started.payroll.software.details.7","</a>"))</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <h2>@Messages("epaye.get.started.paying.employees.heading")</h2>
+        <p>@Messages("epaye.get.started.paying.employees.details.1")</p>
+        <p>@Messages("epaye.get.started.paying.employees.details.2")</p>
+        <p class="panel-indent">@Html(Messages("epaye.get.started.paying.employees.details.3",
+            "<a id=\"submit-late-fps\" href=\"" + govUrl("epaye.fpsAfterPayday") + "\" " +
+                    "data-journey-click=\"EpayeGetStarted:click:SubmitLateFps\">", "</a>"))</p>
+        <h3>@Messages("epaye.get.started.paying.employees.details.4")</h3>
+        <p>@Messages("epaye.get.started.paying.employees.details.5")</p>
+        <p>@Html(Messages("epaye.get.started.paying.employees.details.6",
+            "<a id=\"nil-eps\" href=\"" + govUrl("epaye.nilEps") + "\" " +
+                    "data-journey-click=\"EpayeGetStarted:click:NilEps\">", "</a>"))</p>
+        <p>@Messages("epaye.get.started.paying.employees.details.7")</p>
+    </div>
+
+    <div class="subsection">
+        <h2>@Messages("epaye.get.started.paying.hmrc.heading")</h2>
+        <p>@Messages("epaye.get.started.paying.hmrc.details.1")</p>
+
+        <details>
+            <summary id="paying-hmrc-toggle" class="link-style">@Messages("epaye.get.started.paying.hmrc.details.2")</summary>
+            <div class="panel-indent details">
+                <p>@Messages("epaye.get.started.paying.hmrc.details.3")</p>
+                <ul class="bullets">
+                    <li>@Messages("epaye.get.started.paying.hmrc.details.4")</li>
+                    <li>@Messages("epaye.get.started.paying.hmrc.details.5")</li>
+                </ul>
+                <p>@Messages("epaye.get.started.paying.hmrc.details.6")</p>
+            </div>
+        </details>
+        <p class="panel-indent">@Html(Messages("epaye.get.started.paying.hmrc.details.7",
+            "<a id=\"tax-month-code\" href=\"" + uk.gov.hmrc.epaye.controllers.routes.EpayeController.taxMonthCodes +
+                    "\" data-journey-click=\"EpayeGetStarted:click:TaxMonthCode\">", "</a>"))</p>
+    </div>
+
+    <div class="subsection">
+        <h3>@Messages("epaye.get.started.detailed.guides.heading")</h3>
+        <ul class="bullets">
+            <li><a id="running-payroll"
+            href=@govUrl("epaye.runningPayroll")
+            data-journey-click="EpayeGetStarted:click:RunningPayroll">
+            @Messages("epaye.get.started.detailed.guides.details.1")</a>
+            </li>
+            <li><a id="paying-hmrc"
+            href=@govUrl("epaye.payingHmrc")
+            data-journey-click="EpayeGetStarted:click:PayingHMRC">
+            @Messages("epaye.get.started.detailed.guides.details.2")</a>
+            </li>
+        </ul>
+    </div>
+}

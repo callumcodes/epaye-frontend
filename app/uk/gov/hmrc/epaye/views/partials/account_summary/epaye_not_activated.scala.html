@@ -1,0 +1,40 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import org.joda.time.DateTime
+@(enrolment: connector.Enrolment, currentDateTime: DateTime)(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, lang: Lang, messages: Messages)
+
+@content = {
+
+    <a id="epaye-activate"
+    href="@views.html.helpers.nonActivatedEnrolmentPortalUrl(enrolment)"
+    data-sso="client"
+    data-journey-click="epaye:Click:Activate your EPAYE account"
+    class="activate-enrolment-link button--secondary">
+        @Html(Messages("service.activate","<span class=\"visuallyhidden\">", Messages("service.name.epaye.abbr"),"</span>")) @partials.open_in_portal_window()
+    </a>
+    <p>@Messages("service.message.need.activation.code.post")
+        <a id="epaye-lost-activation-code" href="@views.html.helpers.nonActivatedEnrolmentPinRequestPortalUrl(enrolment)"
+        data-sso="client"
+        data-journey-click="business-tax-home:Click:Lost activation code for EPAYE">
+        @Messages("service.message.lost.activation.code")</a>
+    </p>
+    <p class="epaye-not-activated-msg">@Messages("service.message.activation.takes.24")</p>
+    <p class="panel-indent"><a id="epaye-get-started" href="@controllers.routes.EpayeController.getStarted"
+        data-journey-click="HomepageEpaye:click:ImportantThings">@Html(Messages("epaye.not.activated.get.started", "</a>"))</p>
+}
+
+@partials.account_summary.epaye.wrapper(content)

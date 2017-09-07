@@ -1,0 +1,77 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@()(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang : Lang, messages: Messages)
+
+@import uk.gov.hmrc.epaye.views.helpers._
+@import uk.gov.hmrc.epaye.views.helpers
+@import uk.gov.hmrc.epaye.html._
+
+@main_template(title = Messages("epaye.subpage.employee.benefits.expenses.heading"), bodyClasses = Some("business-tax")) {
+
+    <div class="subsection">
+        <p>@Messages("epaye.benandexp.summary")</p>
+        <p><a id="apply-for-dispensation" href=@govUrl("epaye.applyForDispensation")
+        data-journey-click="EpayeExpAndBen:click:FindOutAboutExemptions">@Messages("epaye.benandexp.find.out.about.exemptions.link")</a></p>
+    </div>
+
+    <div class="subsection">
+        <p>@Messages("epaye.benandexp.calculate.tax.1")</p>
+        <p>@Html(Messages("epaye.benandexp.calculate.tax.2", "<a id=\"tax-rules-for-types\" href=\"" + govUrl("epaye.expAndBensList") + "\" data-journey-click=\"EpayeExpAndBen:click:TaxRulesForTypes\">",
+            "</a>"))</p>
+    </div>
+
+    <div class="subsection">
+        <h3>@Messages("epaye.benandexp.how.to.report.heading")</h3>
+        <details>
+            <summary id="report-once-a-year-toggle" class="link-style">@Messages("epaye.benandexp.how.to.report.once.year.heading")</summary>
+            <div class="panel-indent details">
+                <p>@Html(Messages("epaye.benandexp.how.to.report.once.year.1",
+                    "<a id=\"small-ben-and-exps\" href=\"" + govUrl("epaye.whatsIncludedSettlements") + "\" data-journey-click=\"EpayeExpAndBen:click:SmallBenAndExps\">",
+                    "</a>",
+                    "<a id=\"psa-link\" href=\"" + govUrl("epaye.settlementsOverview") + "\" data-journey-click=\"EpayeExpAndBen:click:PSA\">"))</p>
+                <p>@Messages("epaye.benandexp.how.to.report.once.year.2")</p>
+                <ul class="bullets">
+                    <li>@Html(Messages("epaye.benandexp.how.to.report.once.year.3",
+                        "<a id=\"p11d-form\" data-sso=\"client\" href=\"" + portalUrl("epayeP11dForm") + "\" " +
+                            "data-journey-click=\"EpayeExpAndBen:click:P11D\">",
+                        "</a>",
+                        "<a id=\"p11d-form-paper\" href=\"" + govUrl("epaye.paperP11d") + "\" " +
+                                "data-journey-click=\"EpayeExpAndBen:click:PaperP11D\">","</a>"))</li>
+                    <li>@Html(Messages("epaye.benandexp.how.to.report.once.year.4",
+                        "<a id=\"p11db-form\" data-sso=\"client\" href=\"" + portalUrl("epayeP11dbForm") + "\" data-journey-click=\"EpayeExpAndBen:click:P11DbOnceYear\">",
+                        "</a>"))</li>
+                </ul>
+                @if(shouldSeeIformsLinks) {
+                    <p>@Html(Messages("epaye.benandexp.company.cars.1", "<a id=\"form-p46-car\" href=\"/forms/form/car-provided-to-employee-for-private-use/new\"" +
+                            " data-journey-click=\"EpayeExpAndBen:click:FormP46Car\">",
+                        "</a>"))</p>
+                }
+            </div>
+        </details>
+        <details>
+            <summary id="report-regularly-toggle" class="link-style">@Messages("epaye.benandexp.how.to.report.regularly.heading")</summary>
+            <div class="panel-indent details">
+                <p>@Html(Messages("epaye.benandexp.how.to.report.regularly.1",
+                    "<a id=\"pbik-link\" href=\"" + govUrl("epaye.pbik") + "\" data-journey-click=\"EpayeExpAndBen:click:PBIK\">",
+                    "</a>"))</p>
+                <p>@Html(Messages("epaye.benandexp.how.to.report.regularly.2",
+                    "<a id=\"p11db-form-2\" data-sso=\"client\" href=\"" + portalUrl("epayeP11dbForm") + "\" data-journey-click=\"EpayeExpAndBen:click:P11DbRegularly\">",
+                    "</a>"))</p>
+            </div>
+        </details>
+    </div>
+}

@@ -1,0 +1,179 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.models.json._
+@import uk.gov.hmrc.epaye.models.domain._
+@import uk.gov.hmrc.play.views.formatting.Money.pounds
+@import views.html.helpers.DateFormatting.formatShortMonthNumber
+@import _root_.views.html.helpers.HtmlHelper._
+@import org.joda.time.LocalDate
+
+
+@import connector.UserProfile
+
+@(annualStatement: AnnualStatement, taxYear: TaxYear, currentTaxMonth: Option[TaxMonth], today: LocalDate)(implicit userProfile: UserProfile, authContext : uk.gov.hmrc.play.frontend.auth.AuthContext, messages: Messages, lang: Lang)
+
+@lineItemClass(month: AnnualStatementLineItem) = @{
+    val overdue = if(month.isOverdue(today)) "overdue" else ""
+    val eyu = if(month.isEyu) "earlier-year-update" else "tax-month"
+    s"class=$overdue $eyu"
+}
+
+@tableRowStatusStyle = {
+    font-size: 14px;
+    font-weight: 100;
+}
+
+@overdueStyle(month: AnnualStatementLineItem) = @{
+    if(month.isOverdue(today)) {
+        "font-weight:bold; color: #b10e1e;"
+    }
+}
+
+@lineItemTaxPeriod(lineItem: AnnualStatementLineItem, taxMonth: TaxMonth) = {
+    <div id="tax-month-@lineItem.taxMonth.map(_.month).getOrElse(0)-dates">
+        @Html(Messages("epaye.annual.statements.tax.year.text",
+            taxMonth.firstDay,
+            formatShortMonthNumber(taxMonth.startCalendarMonth),
+            taxMonth.lastDay,
+            formatShortMonthNumber(taxMonth.endCalendarMonth)))
+    </div>
+}
+
+@lineItemTaxMonth(lineItem: AnnualStatementLineItem, taxMonth: TaxMonth) = {
+    <div id="tax-month-@lineItem.taxMonth.map(_.month).getOrElse(0)-month">
+    @Html(Messages("epaye.annual.statements.month", taxMonth.month))
+    </div>
+}
+
+    <div class=" flush--top">@Html(Messages("epaye.annual.statements.how_long_does_it_take", """<a href="/business-account/help/epaye/latency">""", """</a>"""))</div>
+
+    <p></p>
+    <details class="flush--top">
+        <summary role="button" aria-expanded="false">@Messages("epaye.annual.statements.what_does_this_table_show")</summary>
+        <div class="panel-indent" id="details-content-1">
+            <p>@Messages("epaye.annual.statements.details.p1")</p>
+            <p>@Messages("epaye.annual.statements.details.p2")</p>
+            <p>@Html(Messages("epaye.annual.statements.details.p3", s"""<a href="${routes.BusinessTaxController.home()}">""", "</a>"))</p>
+        </div>
+    </details>
+    <section class="subsection">
+        <table class=" table--statement flush--bottom">
+            <thead>
+                <tr>
+                    <th>
+                    @Messages("epaye.annual.statements.tax_period")
+                    </th>
+                    <th class="text--right owed">@Messages("epaye.annual.statements.charges")</th>
+                    <th class="text--right owed">@Messages("epaye.annual.statements.payments_and_credits")</th>
+                    <th class="text--right owed">@Messages("epaye.annual.statements.balance")</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(taxMonth <- currentTaxMonth) {
+                    <tr class="current-tax-month" id="current-tax-month">
+                        <td>
+                        @Html(Messages("epaye.annual.statements.tax.year.text",
+                            taxMonth.firstDay,
+                            formatShortMonthNumber(taxMonth.startCalendarMonth),
+                            taxMonth.lastDay,
+                            formatShortMonthNumber(taxMonth.endCalendarMonth)))
+                        <br/>
+                            @Html(Messages("epaye.annual.statements.month", taxMonth.month))
+                        </td>
+                        <td class="text--right owed">
+                            -
+                        </td>
+                        <td class="text--right">
+                            -
+                        </td>
+                        <td class="text--right td-highlight table-cell--light">
+                            -
+                        </td>
+                    </tr>
+                }
+                @for(lineItem <- annualStatement.lineItems){
+                <tr @lineItemClass(lineItem) id="tax-month-@lineItem.taxMonth.map(_.month).getOrElse(0)">
+                    @if(lineItem.isEyu) {
+	                        <td style="@overdueStyle(lineItem) " class="align--top">
+	                            @Messages("epaye.annual.statements.earlier_year_update_bill.p1")
+	                            <br/>
+	                            @Html(Messages(
+	                                "epaye.annual.statements.earlier_year_update_bill.p2",
+	                                lineItem.taxYear.yearFrom.toString,
+	                                lineItem.taxYear.yearTo.toString
+	                            ))
+	                        </td>
+	                    } else {
+                        @for(taxMonth <- lineItem.taxMonth) {
+	                    <!-- Link -->
+                            <td style="@overdueStyle(lineItem) " class="align--top" id="tax-month-@lineItem.taxMonth.map(_.month).getOrElse(0)-tax-period">
+                                @if(lineItem.isSpecified){
+                                    @lineItemTaxPeriod(lineItem, taxMonth)
+                                    @lineItemTaxMonth(lineItem, taxMonth)
+                                } else {
+                                    <a href="@controllers.routes.EpayeMonthlyStatementController.statement(taxYear, taxMonth)" style="@overdueStyle(lineItem)" id="tax-month-@lineItem.taxMonth.map(_.month).getOrElse(0)-link">
+                                        @lineItemTaxPeriod(lineItem, taxMonth)
+                                        @lineItemTaxMonth(lineItem, taxMonth)
+                                    </a>
+                            }
+	                    </td>
+	                    }
+	                }
+                    <!-- Charges -->
+                    <td class="text--right owed align--top" style="@overdueStyle(lineItem) " id="tax-month-@lineItem.taxMonth-owed">
+                        @pounds(lineItem.charges.debit, 2)
+                        @if(lineItem.isSpecified){
+                            <div class="table--row--status estimated" style="@tableRowStatusStyle">estimated</div>
+                        }
+                    </td>
+                    <!-- Payments and Credits -->
+                    <td class="text--right align--top" style="@overdueStyle(lineItem) " id="tax-month-@lineItem.taxMonth-cleared">
+                        @pounds(lineItem.cleared.payment, 2)
+                    </td>
+                    <!-- Balance -->
+                    <td class="text--right td-highlight table-cell--light align--top" style="@overdueStyle(lineItem) " id="tax-month-@lineItem.taxMonth-balance">
+                        @pounds(lineItem.balance.debit, 2)
+                    @if(lineItem.isOverdue(today)){
+                        <div class="table--row--status overdue" style="@tableRowStatusStyle">@Messages("epaye.annual.statements.overdue")</div>
+                    }
+                    </td>
+                </tr>
+                }
+
+                <tr>
+                    <td colspan="5" style="border-bottom: 0;padding: 0px;"></td>
+                </tr>
+
+                <tr id="totals">
+                    <th class="bold-xsmall" colspan="1">
+                        @Messages("epaye.annual.statements.total")
+                    </th>
+                    <td class="text--right bold-xsmall"  id="total-owed">
+                        @pounds(annualStatement.totals.charges.debit ,2).strong
+                    </td>
+                    <td class="text--right bold-xsmall" id="total-cleared">
+                        @pounds(annualStatement.totals.cleared.payment ,2).strong
+                    </td>
+                    <td class="text--right bold-xsmall td-highlight table-cell--light" id="total-balance">
+                        @pounds(annualStatement.totals.balance.debit ,2).strong
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+

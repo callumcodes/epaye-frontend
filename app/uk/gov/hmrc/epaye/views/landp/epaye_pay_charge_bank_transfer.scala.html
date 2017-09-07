@@ -1,0 +1,70 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.html._
+@(xref: String)(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang: Lang, messages: Messages)
+
+@main_template(title = Messages("epaye.landp.pay.charges.bank.title")) {
+    <div class="tabular-data__entry divider--bottom">
+        <span id="epaye-landp-pay-charges-bank-ref" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.reference")</span>
+        <span id="epaye-landp-pay-charges-bank-ref-value" class="tabular-data__data-2 tabular-data__data-1--2-col">@xref</span>
+    </div>
+    <div class="tabular-data__entry divider--bottom">
+        <span id="epaye-landp-pay-charges-bank-account-name" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.account.name")</span>
+        <span id="epaye-landp-pay-charges-bank-account-name-value" class="tabular-data__data-2 tabular-data__data-1--2-col">HMRC Cumbernauld</span>
+    </div>
+    <div class="tabular-data__entry divider--bottom">
+        <span id="epaye-landp-pay-charges-bank-sort-code" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.sort.code")</span>
+        <span id="epaye-landp-pay-charges-bank-sort-code-value" class="tabular-data__data-2 tabular-data__data-1--2-col">08 32 10</span>
+    </div>
+    <div class="tabular-data__entry divider--bottom">
+        <span id="epaye-landp-pay-charges-bank-account-number" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.account.number")</span>
+        <span id="epaye-landp-pay-charges-bank-account-number-value" class="tabular-data__data-2 tabular-data__data-1--2-col">12001039</span>
+    </div>
+
+    <details>
+        <summary class="underline">
+            <span id="epaye-landp-pay-charges-bank-overseas">@Messages("epaye.landp.pay.charges.bank.overseas.link")</span>
+        </summary>
+
+        <p id="epaye-landp-pay-charges-bank-overseas-message">@Messages("epaye.landp.pay.charges.bank.overseas.message")</p>
+
+        <div class="tabular-data__entry divider--bottom">
+            <span id="epaye-landp-pay-charges-bank-overseas-account-name" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.overseas.account.name")</span>
+            <span id="epaye-landp-pay-charges-bank-overseas-account-name-value" class="tabular-data__data-2 tabular-data__data-1--2-col">HMRC Cumbernauld</span>
+        </div>
+        <div class="tabular-data__entry divider--bottom">
+            <span id="epaye-landp-pay-charges-bank-overseas-account-number" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.overseas.account.number")</span>
+            <span id="epaye-landp-pay-charges-bank-overseas-account-number-value" class="tabular-data__data-2 tabular-data__data-1--2-col">GB62BARC20114770297690</span>
+        </div>
+        <div class="tabular-data__entry divider--bottom">
+            <span id="epaye-landp-pay-charges-bank-overseas-bic" class="tabular-data__heading tabular-data__heading--label">@Messages("epaye.landp.pay.charges.bank.overseas.bic")</span>
+            <span id="epaye-landp-pay-charges-bank-overseas-bic-value" class="tabular-data__data-2 tabular-data__data-1--2-col">BARCGB22</span>
+        </div>
+
+        <p id="epaye-landp-pay-charges-bank-overseas-address-message">@Messages("epaye.landp.pay.charges.bank.overseas.address.message")</p>
+
+        <div class="box--shaded">
+            <dl>
+                <dd id="epaye-landp-pay-charges-bank-overseas-address-1" class="flush--bottom">Barclays Bank PLC</dd>
+                <dd id="epaye-landp-pay-charges-bank-overseas-address-2" class="flush--bottom">1 Churchill Place</dd>
+                <dd id="epaye-landp-pay-charges-bank-overseas-address-3" class="flush--bottom">London</dd>
+                <dd id="epaye-landp-pay-charges-bank-overseas-address-4" class="flush--bottom">United Kingdom</dd>
+                <dd id="epaye-landp-pay-charges-bank-overseas-address-5" class="flush--bottom">E14 5HP</dd>
+            </dl>
+        </div>
+    </details>
+}

@@ -1,0 +1,142 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.html._
+
+@()(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang : Lang, messages: Messages)
+
+@main_template(title = Messages("epaye.tax.month.codes.title"), bodyClasses = Some("business-tax")) {
+    <div>
+        <p>@Messages("epaye.tax.month.codes.details.1")</p>
+        <p>@Messages("epaye.tax.month.codes.details.2")</p>
+    </div>
+
+    <div data-tabs class="js-hash-selected-tab">
+
+        <ul class="tabs-nav flush--bottom flush--top js-visible" role="tablist">
+            <li id="tab-monthly" role="tab" aria-selected="true" aria-controls="content-monthly" tabindex="0" data-tab-link="monthly">
+                <span class="tabs-nav__tab tabs-nav__tab--active font-xsmall" href="#monthly" >@Messages("epaye.tax.month.codes.monthly")</span>
+            </li>
+            <li id="tab-quarterly" role="tab" aria-selected="true" aria-controls="content-quarterly" tabindex="0" data-tab-link="quarterly">
+                <a class="tabs-nav__tab font-xsmall" href="#quarterly">@Messages("epaye.tax.month.codes.quarterly")</a>
+            </li>
+        </ul>
+
+        <ul class="flush--top flush--bottom font-xsmall">
+            <li id="content-monthly" class="tab-content flush--top" data-tab-content="monthly" role="tabpanel" aria-labelledby="tab-monthly">
+                <div data-tab-content="monthly">
+                    <div class="js-hidden">
+                        <h3>@Messages("epaye.tax.month.codes.monthly")</h3>
+                    </div>
+                    <div class="tabular-data__tab-content">
+                        <table class="monthly">
+                            <tbody>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.heading.month")</th>
+                                    <th>@Messages("epaye.tax.month.codes.heading.characters")</th>
+                                    <th>@Messages("epaye.tax.month.codes.heading.finaldigits")</th>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.jan.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1610</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.feb.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1611</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.mar.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1612</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.apr.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1701</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.may.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1702</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.jun.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1703</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.jul.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1704</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.aug.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1705</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.sep.month")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1706</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </li>
+            <li id="content-quarterly" class="tab-content flush--top" data-tab-content="quarterly" role="tabpanel" aria-labelledby="tab-quarterly">
+                <div data-tab-content="quarterly">
+                    <div class="js-hidden">
+                        <h3>@Messages("epaye.tax.month.codes.quarterly")</h3>
+                    </div>
+                    <div class="tabular-data__tab-content">
+                        <table class="quarterly">
+                            <tbody>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.heading.quarter")</th>
+                                    <th>@Messages("epaye.tax.month.codes.heading.characters")</th>
+                                    <th>@Messages("epaye.tax.month.codes.heading.finaldigits")</th>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.oct.quarter")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1609</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.jan.quarter")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1612</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.apr.quarter")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1703</td>
+                                </tr>
+                                <tr>
+                                    <th>@Messages("epaye.tax.month.codes.jul.quarter")</th>
+                                    <td>@Messages("epaye.tax.month.codes.accounts.ref")</td>
+                                    <td>1706</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+}

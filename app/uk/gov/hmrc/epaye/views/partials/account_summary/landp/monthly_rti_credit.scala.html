@@ -1,0 +1,44 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import model.domain.{RtiMonthCredit, TaxMonth, TaxYear}
+@import uk.gov.hmrc.play.views.formatting.Money.pounds
+@import views.html.epaye.partials
+
+
+
+@(credit: RtiMonthCredit, index: Int)(implicit messages: Messages)
+
+<li id="epaye-rti-charges-@index" class="section__li tax-grouping credit">
+    <div class="soft--bottom soft--right flush--bottom">
+        <div class="grid-layout grid-layout--stacked flush--bottom flush--left">
+            <div class="grid-layout grid-layout--stacked flush--bottom flush--left">
+                <div class="grid-layout__column grid-layout__column--3-4 flush--bottom">
+                    <p class="flush--bottom alert alert--borderless soft--left soft-half--ends panel">
+                        @Html(Messages("epaye.rti.monthly.credit.message", pounds(credit.amount, 2), credit.taxMonth))
+                        -
+                        <a href="@controllers.routes.EpayeMonthlyStatementController.statement(TaxYear(credit.taxYear), TaxMonth(credit.taxMonth))">
+                            @Html(Messages("epaye.see_breakdown"))
+                        </a>
+                    </p>
+                </div>
+                <div class="grid-layout__column grid-layout__column--1-4">
+                </div>
+            </div>
+        </div>
+        @partials.getRefundButton()
+    </div>
+</li>

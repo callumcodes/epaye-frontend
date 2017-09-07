@@ -1,0 +1,70 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.html._
+@import uk.gov.hmrc.epaye.views.helpers
+@()(implicit auserProfile: uk.gov.hmrc.epaye.connectors.UserProfile, uthContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang : Lang, messages: Messages)
+
+@import uk.gov.hmrc.epaye.views.helpers.portalUrl
+
+@sidebarLinks = {
+    <section class="section--branded section--blue-top">
+        <nav role="navigation">
+            <div class="subsection">
+                <h3>@Messages("epaye.messages.sidebar.title")</h3>
+                <ul class="sidebar__list">
+                    <li></li>
+                    <li><a id="change-tax-code-student-notices" class="font-xsmall" href="@portalUrl("epayeChangeNotices")"
+                    data-journey-click="EpayeMessages:click:ChangeNoticeOptions" data-sso="client">@Messages("epaye.messages.sidebar.change.notices")</a></li>
+                    <li><a id="change-notices-email" class="font-xsmall" href="@portalUrl("epayeViewMessageNotificationsEmail")"
+                    data-journey-click="EpayeMessages:click:ChangeNoticesEmail" data-sso="client">@Messages("epaye.messages.sidebar.change.email")</a></li>
+                </ul>
+            </div>
+        </nav>
+    </section>
+}
+
+@main_template(title = Messages("epaye.messages.title"), bodyClasses = Some("business-tax"), sidebarLinks = Some(sidebarLinks), sidebarClasses = Some("sidebar")) {
+    <div class="subsection">
+        <ul>
+            <li><a id="tax-code-notices" href="@portalUrl("epayeTaxCodeNotices")"
+            data-journey-click="EpayeMessages:click:TaxCodeNotices" data-sso="client">@Messages("epaye.messages.tax.code.notices.link")</a></li>
+            <li>@Html(Messages("epaye.messages.tax.code.notices.detail", "<a id=\"tax-codes\" href=\"" + helpers.govUrl("epaye.taxCodes") + "\" " +
+                    "data-journey-click=\"EpayeMessages:click:TaxCodes\">",
+                "</a>"))</li>
+        </ul>
+        <ul>
+            <li><a id="generic-notices" href="@portalUrl("epayeGenericNotices")"
+            data-journey-click="EpayeMessages:click:GenericNotices" data-sso="client">@Messages("epaye.messages.generic.notices.link")</a></li>
+            <li>@Messages("epaye.messages.generic.notices.detail")</li>
+        </ul>
+        <ul>
+            <li><a id="employer-notices" href="@portalUrl("epayeEmployerNotices")"
+            data-journey-click="EpayeMessages:click:EmployerNotices" data-sso="client">@Messages("epaye.messages.employer.notices.link")</a></li>
+            <li>@Messages("epaye.messages.employer.notices.detail")</li>
+        </ul>
+        <ul>
+            <li><a id="rti-notices" href="@portalUrl("epayeRtiNotices")"
+            data-journey-click="EpayeMessages:click:RtiNotices" data-sso="client">@Messages("epaye.messages.rti.notices.link")</a></li>
+            <li>@Messages("epaye.messages.rti.notices.detail")</li>
+        </ul>
+        <ul>
+            <li><a id="student-loan-notices" href="@portalUrl("epayeStudentLoanNotices")"
+            data-journey-click="EpayeMessages:click:StudentLoanNotices" data-sso="client">@Messages("epaye.messages.student.loan.notices.link")</a></li>
+            <li>@Messages("epaye.messages.student.loan.notices.detail")</li>
+        </ul>
+    </div>
+}

@@ -1,0 +1,119 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import org.joda.time.DateTime
+@import uk.gov.hmrc.epaye.connectors.UserProfile
+@import uk.gov.hmrc.epaye.html._
+@import uk.gov.hmrc.epaye.views.html._
+@import uk.gov.hmrc.epaye.services._
+@import uk.gov.hmrc.epaye.views.helpers._
+
+@(landPModel:Option[EpayeLandpModel], epayeModel: uk.gov.hmrc.epaye.models.EpayeModel, currentDateTime: DateTime)(implicit profile: UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, request: Request[_], lang : Lang, messages: Messages)
+
+
+@main_template(title = Messages("epaye.subpage.title"),
+    sidebarLinks = Some(epaye_subpage_and_change_in_circumstances_sidebar()),
+    warnings = Some(partials.payments_update_message()),
+    sidebarClasses = Some("sidebar"),
+    bodyClasses = Some("business-tax")) {
+    <ul class="action-list list-noborder">
+    @renderAccountSummaryView(landPModel, epayeModel, currentDateTime, showSubpageLink = false)
+    </ul>
+
+    <div class="subsection--wide">
+        <h2>@Messages("epaye.payroll.submissions.heading")</h2>
+
+        <ul>
+            <li><a id="check-a-submission" href="@uk.gov.hmrc.epaye.controllers.routes.HelpAndContactController.helpAndContactWithSubpage("epaye/check-submissions")"
+            data-journey-click="EpayeSubpage:click:CheckSubmission">@Messages("epaye.subpage.check.a.submission")</a></li>
+            <li><a id="correct-a-submission" href="@uk.gov.hmrc.epaye.controllers.routes.HelpAndContactController.helpAndContactWithSubpage("epaye/correct-submissions")"
+            data-journey-click="EpayeSubpage:click:CorrectSubmission">@Messages("epaye.subpage.correct.a.submission")</a></li>
+            @if(profile.userDetail.email.isEmpty || profile.userDetail.email.get.isEmpty){
+                <li><p class="panel-indent"><a id="add-ggw-email" href="@uk.gov.hmrc.epaye.controllers.routes.ManageAccountController.governmentGatewayWarning"
+                data-journey-click="EpayeSubpage:click:AddGgwEmail">@Html(Messages("epaye.subpage.add.your.email.address", "</a>"))</p></li>
+            }
+        </ul>
+    </div>
+
+    <div class="subsection--wide">
+        <h2>@Messages("epaye.subpage.tax.code.notices.messages.heading")</h2>
+
+        <ul>
+            <li><p>@Messages("epaye.subpage.tax.code.notices.messages.1")</p></li>
+            <li><a id="epaye-messages" href="@uk.gov.hmrc.epaye.controllers.routes.EpayeController.messages"
+            data-journey-click="EpayeSubpage:click:Messages">@Messages("epaye.subpage.tax.code.notices.messages.2")</a></li>
+        </ul>
+    </div>
+
+    <div class="subsection--wide">
+        <h2>@Messages("epaye.subpage.employee.benefits.expenses.heading")</h2>
+
+        <ul>
+            <li><p>@Messages("epaye.subpage.employee.benefits.expenses.1")</p></li>
+            <li><a id="benefits-expenses" href="@uk.gov.hmrc.epaye.controllers.routes.EpayeController.benefitsAndExpenses"
+            data-journey-click="EpayeSubpage:click:BenefitsAndExpenses">@Messages("epaye.subpage.employee.benefits.expenses.2")</a></li>
+        </ul>
+    </div>
+
+    @if(shouldSeeIformsLinks) {
+        <div id="employee-circumstances-links" class="subsection--wide">
+            <h2>@Messages("epaye.subpage.change.circumstances.heading")</h2>
+
+            <ul>
+                <li>
+                    <details>
+                        <summary class="underline summary--black">@Messages("epaye.subpage.parental.leave.heading")</summary>
+                        <div class="panel-indent details">
+                            <p>@Html(Messages("epaye.subpage.parental.leave.1","<a id=\"paid-parental-leave\" href=\"" + govUrl("epaye.matPatCalculator") + "\" " +
+                                    "data-journey-click=\"EpayeSubpage:click:PaidPaternalLeave\">","</a>"))</p>
+                            <p>@Html(Messages("epaye.subpage.parental.leave.2","<a id=\"reclaim-payments\" href=\"" + govUrl("epaye.reclaimPayments") + "\" " +
+                                    "data-journey-click=\"EpayeSubpage:click:ReclaimPayments\">","</a>"))</p>
+                            <p>@Html(Messages("epaye.subpage.parental.leave.3","<a id=\"ask-hmrc-refund\" href=\"/forms/form/financial-help-with-statutory-payments/new\" " +
+                                    "data-journey-click=\"EpayeSubpage:click:AskHmrcRefundParental\">","</a>"))</p>
+                        </div>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary class="underline summary--black">@Messages("epaye.subpage.send.employees.eueea.heading")</summary>
+                        <div class="panel-indent details">
+                            <p>@Html(Messages("epaye.subpage.send.employees.eueea.1","<a id=\"form-ca3821\" href=\"/forms/form/Sending-employees-to-work-abroad/new\" " +
+                                    "data-journey-click=\"EpayeSubpage:click:FormCa3821\">","</a>"))</p>
+                            <p>@Html(Messages("epaye.subpage.send.employees.eueea.2","<a id=\"form-ca3822\" href=\"/forms/form/Employees-going-to-work-in-EEA/new\" " +
+                                    "data-journey-click=\"EpayeSubpage:click:FormCa3822\">","</a>"))</p>
+                            <p>@Html(Messages("epaye.subpage.send.employees.eueea.3",
+                                "<a id=\"euro-union\" href=\"" + govUrl("euEea") + "\" data-journey-click=\"EpayeSubpage:click:EU\">",
+                                "</a>",
+                                "<a id=\"euro-economic\" href=\"" + govUrl("euEea") + "\" data-journey-click=\"EpayeSubpage:click:EEA\">"))</p>
+                        </div>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary class="underline summary--black">@Messages("epaye.subpage.hmrc.employee.refund.heading")</summary>
+                        <div class="panel-indent details">
+                            <p>@Messages("epaye.subpage.hmrc.employee.refund.1")</p>
+                            <p>@Messages("epaye.subpage.hmrc.employee.refund.2")</p>
+                            <p>@Html(Messages("epaye.subpage.hmrc.employee.refund.3","<a id=\"form-epaye-refund\" href=\"/forms/form/Application-for-funding-a-tax-refund-for-an-employee/new\" " +
+                                    "data-journey-click=\"EpayeSubpage:click:AskHmrcRefundEpaye\">","</a>"))</p>
+                        </div>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    }
+
+}

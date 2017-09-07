@@ -1,0 +1,38 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.views.html.helpers.DateFormatting.formatDayMonthYear
+@import uk.gov.hmrc.epaye.models.domain._
+
+@(dueDate: DueDate, showBar: Boolean)(implicit m: Messages)
+
+@barCss = {
+    @if(showBar) {alert}
+}
+
+@if(dueDate.isOverdue) {
+    <p class="flush--bottom @barCss soft-half--ends soft--right overdue" style="color: #b10e1e;">
+        <strong class="bold-xsmall">
+            @Messages("epaye.nonRti.overdue")
+        </strong>
+    </p>
+} else{
+    <p class="flush--bottom @barCss soft-half--ends soft--right dueBy">
+        <strong class="bold-xsmall">
+            @Messages("epaye.nonRti.due_by", formatDayMonthYear(dueDate.date))
+        </strong>
+    </p>
+}

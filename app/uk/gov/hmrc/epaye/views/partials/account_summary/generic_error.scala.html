@@ -1,0 +1,22 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@()(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, lang: Lang, messages: Messages)
+@import views.html.helpers.portalUrl
+
+<p>@Messages("epaye.account.summary.generic.error.1")</p>
+<p>@Html(Messages("account.summary.generic.error.refresh", "<a id=\"epaye-old-hmrc\" data-journey-click=\"EPAYE:click:oldHMRCWebsite\" data-sso=\"client\" href=\"" + portalUrl("epayeAccountDetails") + "\">", "</a>"))
+</p>

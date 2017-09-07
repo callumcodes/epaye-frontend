@@ -1,0 +1,190 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.models.domain._
+@import uk.gov.hmrc.domain.EmpRef
+@import views.html.helpers.DateFormatting.formatShortMonthNumber
+@import views.html.helpers.DateFormatting.formatFull
+@import uk.gov.hmrc.epaye.models.json._
+@import uk.gov.hmrc.play.views.formatting.Money.pounds
+@import org.joda.time.LocalDate
+
+@(monthlyStatementJson: MonthlyStatementJson, empRef:EmpRef, taxYear: TaxYear, taxMonth: TaxMonth, today: LocalDate)(implicit messages: Messages)
+
+<div>
+    <h2 id="statement-period">@Messages(
+            "epaye.monthly.statements.period",
+            taxMonth.firstDay,
+            formatShortMonthNumber(taxMonth.startCalendarMonth),
+            taxYear.startingYearForTaxMonth(taxMonth).toString,
+            taxMonth.lastDay,
+            formatShortMonthNumber(taxMonth.endCalendarMonth),
+            taxYear.endYearForTaxMonth(taxMonth).toString
+        )
+    </h2>
+
+    @if(monthlyStatementJson.isOverdue(today)) {
+        <div id="overdue-alert-banner" class="panel-indent panel-indent--gutter alert--failure soft--bottom soft--right" style="border-left-width:4px">
+            <div class="grid-layout grid-layout--stacked flush--bottom flush--left spacing--bottom">
+                <div class="grid-layout__column grid-layout__column--3-4 flush--bottom">
+                @Messages("epaye.monthly.statements.overdue_banner")
+                </div>
+            </div>
+        </div>
+    }
+
+
+    @expanded = @{ monthlyStatementJson.charges > 0}
+    @detailsClass = @{
+        if(expanded){
+            "class=open"
+        }else{
+            "class"
+        }
+    }
+    @detailsOpen = @{
+        if(expanded){
+            "open"
+        }
+    }
+
+    <table class="flush--bottom">
+        <tbody>
+            <tr class="only-with-payments">
+                <th style=" font-size:19px; padding-bottom:0; border-bottom:0;" id="charges-summary-line">@Messages("epaye.monthly.statements.charges")</th>
+                <td class="right-aligned bold-small align--top only-with-payments" style=" padding-bottom:0; border-bottom:0;">
+                    <span>@pounds(monthlyStatementJson.charges, 2)</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding-top: 0; padding-right: 0;">
+                <details @detailsClass id="statement-details" @detailsOpen>
+                    <summary class="summary font-xsmall" role="button" aria-expanded="@expanded">@Messages("epaye.monthly.statements.see_breakdown")</summary>
+
+                    <div class="panel-indent " style="margin-bottom:20px" id="details-content-1">
+                        <table id="statement-breakdown-table" class="table--statement" style="margin-bottom: 0; ">
+                            <tbody>
+                                <tr>
+                                    <th id="fps-section-title" colspan="2">@Messages("epaye.monthly.statements.fps")</th>
+                                </tr>
+                                @for(charge <- monthlyStatementJson.fps) {
+                                    <tr>
+                                        <td>
+                                            @Code.codeToName(charge.code)
+                                        </td>
+                                        <td class="right-aligned">
+                                            @pounds(charge.amount, 2)
+                                        </td>
+                                    </tr>
+                                }
+                                <tr class="only-with-payments">
+                                    <th class="right-aligned" colspan="2" style="border-bottom:0;">
+                                        @pounds(monthlyStatementJson.fps.map(_.amount).sum, 2)
+                                    </th>
+                                </tr>
+                                    <!-- CIS -->
+                                @for(charge <- monthlyStatementJson.cis) {
+                                    <tr>
+                                        <th id="cis-section-title" colspan="2">@Messages("epaye.monthly.statements.cis")</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @Messages("epaye.charge.name.2040.1000")
+                                        </td>
+                                        <td class="right-aligned">
+                                        @pounds(charge, 2)
+                                        </td>
+                                    </tr>
+                                    <tr class="only-with-payments">
+                                        <th class="right-aligned" colspan="2" style="border-bottom:0;">
+                                        @pounds(monthlyStatementJson.cis.getOrElse(0), 2)
+                                        </th>
+                                    </tr>
+                                }
+                                <tr>
+                                    <th id="eps-section-title" colspan="2">@Messages("epaye.monthly.statements.eps")</th>
+                                </tr>
+                                @for(charge <- monthlyStatementJson.eps) {
+                                    <tr>
+                                        <td>
+                                        @Code.codeToName(charge.code)
+                                        </td>
+                                        <td class="right-aligned">
+                                        @pounds(charge.amount, 2)
+                                        </td>
+                                    </tr>
+                                }
+                                <tr class="only-with-payments">
+                                    <th class="right-aligned" colspan="2" style="border-bottom:0;">
+                                    @pounds(monthlyStatementJson.eps.map(_.amount).sum, 2)
+                                    </th>
+                                </tr>
+                                @for(charge <- monthlyStatementJson.interest) {
+                                    <tr>
+                                        <th id="other-charges-section-title" colspan="2">@Messages("epaye.monthly.statements.other_charges")</th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        @Messages("epaye.monthly.statements.interest")
+                                        </td>
+                                        <td class="right-aligned">
+                                        @pounds(charge, 2)
+                                        </td>
+                                    </tr>
+                                    <tr class="only-with-payments">
+                                        <th class="right-aligned" colspan="2" style="border-bottom:0;">
+                                        @pounds(monthlyStatementJson.interest.getOrElse(0), 2)
+                                        </th>
+                                    </tr>
+                                }
+                            </tbody></table>
+                            <!--  if a payment is made then put the table of charges in a closed summary  -->
+                    </div>
+                </details>
+            </td>
+            </tr>
+            <tr>
+                <th id="payments-and-credits-line" style="font-size:19px; padding-bottom:10px; padding-top: 14px;">@Messages("epaye.monthly.statements.payments_and_credits")</th>
+                <td id="cleared-amount" class="right-aligned bold-small align--top only-with-payments" style="padding-bottom:10px; padding-top: 14px;">
+                    <span>@pounds(monthlyStatementJson.cleared.total, 2)</span>
+                </td>
+            </tr>
+            @if(monthlyStatementJson.balance.debit == 0) {
+                <tr>
+                    <th id="balance-line" colspan="2" style="font-size:19px; padding-bottom:10px; padding-top: 40px; text-align: right;">@Messages("epaye.monthly.statements.this_bill_has_been_paid")</th>
+                </tr>
+            } else {
+                @for(dueDate <- monthlyStatementJson.dueDate) {
+                    <tr>
+                        <th id="balance-line" style="font-size:19px; padding-bottom:10px; padding-top: 40px;">@Messages("epaye.monthly.statements.total_due_by", formatFull(dueDate))</th>
+                        <td class="right-aligned bold-small align--top only-with-payments" id="balance-amount" style="padding-bottom:10px; padding-top: 40px;">
+                            <span>@pounds(monthlyStatementJson.balance.debit, 2)</span>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @if(monthlyStatementJson.balance.debit > 0) {
+        <p class="text--right">
+            <a id="payment-button" class="button only-without-payments" style="margin-right:0;" href="/pay-online/epaye/make-a-payment?mode=bta" data-journey-click="EpayeRtiMonthDebit:Click:PayThisBill">
+            @Messages("epaye.monthly.statements.pay_bill")
+            </a>
+        </p>
+    }
+
+</div>
+

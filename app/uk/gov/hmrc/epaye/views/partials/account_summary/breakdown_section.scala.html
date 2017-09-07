@@ -1,0 +1,64 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@(previousMonth: String, currentMonth: String, hasZeroRtiBalance: Boolean, hasAppLevyCharges: Boolean)(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, authContext: uk.gov.hmrc.play.frontend.auth.AuthContext, lang : Lang, messages: Messages)
+<li class="section__li">
+    <details class="flush--top" data-journey-click="HomepageEpaye:click:SeeBreakdownUpdate">
+        <summary class="underline">
+            <span id="epaye-see-breakdown">@if(hasZeroRtiBalance){
+                @Messages("view.statement")
+            } else {
+                @Messages("see.breakdown")
+            }</span>
+        </summary>
+        <div class="panel-indent font-xsmall">
+            <p>@if(hasZeroRtiBalance){
+                @Messages("view.statement.detail.1")
+            } else {
+                @Messages("see.breakdown.detail.1")
+            }</p>
+            <h3>@Messages("epaye.payroll.submissions.heading")</h3>
+            <p>@Messages("see.breakdown.detail.3")</p>
+            <p>@Messages("see.breakdown.detail.4", previousMonth, currentMonth)</p>
+            <table>
+                <thead>
+                    <th>@Messages("see.breakdown.table.date.submission")</th>
+                    <th>@Messages("see.breakdown.table.balance.updates")</th>
+                </thead>
+                <tr>
+                    <td>@Messages("see.breakdown.table.sixth.to.fifth", previousMonth, currentMonth)</td>
+                    <td>@Messages("see.breakdown.table.sixth.to.twelfth", currentMonth)</td>
+                </tr>
+                <tr>
+                    <td>@Messages("see.breakdown.table.sixth.to.eleventh", currentMonth)</td>
+                    <td>@Messages("see.breakdown.table.thirteenth", currentMonth)</td>
+                </tr>
+                <tr>
+                    <td>@Messages("see.breakdown.table.after.eleventh", currentMonth)</td>
+                    <td>@Messages("see.breakdown.table.within.two.days", currentMonth)</td>
+                </tr>
+            </table>
+
+            <h3>@Messages("see.breakdown.payments.heading")</h3>
+            <p>@Messages("see.breakdown.payments.detail")</p>
+            <p><a id="epaye-still-see-breakdown"
+                href="@if(hasAppLevyCharges){@controllers.routes.EpayeController.breakdownNoLevy.url} else {@views.html.helpers.portalUrl("epayeAccountDetails")}"
+                @if(!hasAppLevyCharges){data-sso="client"}
+                data-journey-click="HomepageEpaye:click:SeeBreakdownPortal">@if(hasZeroRtiBalance){@Messages("view.statement.still.link")} else {@Messages("see.breakdown.still.link")}</a>
+            </p>
+        </div>
+    </details>
+</li>

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.epaye
 
 import play.api.Play.{configuration, current}
@@ -8,9 +24,19 @@ trait AppConfig {
   val analyticsHost: String
   val reportAProblemPartialUrl: String
   val reportAProblemNonJSUrl: String
+  def loginContinueRelativeUrls : Boolean
+  def isTimeManipulationEnabled: Boolean
+  def epayeLandpRampUpPercentage: Int
+  def epayeRelease3RampUpPercentage: Int
+  def epayeRelease4RampUpPercentage: Int
+  def epayeUseOdsApi: Boolean
+  def enableLanguageSwitching: Boolean
+  val ssoUrl: String
+  def videoSurveyBannerUrl : Option[String]
 }
 
 object FrontendAppConfig extends AppConfig with ServicesConfig {
+
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
@@ -21,4 +47,14 @@ object FrontendAppConfig extends AppConfig with ServicesConfig {
   override lazy val analyticsHost = loadConfig(s"google-analytics.host")
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+
+  override def loginContinueRelativeUrls: Boolean = configuration.getBoolean(s"govuk-tax.$env.loginContinue.relativeUrls").getOrElse(true)
+  override def isTimeManipulationEnabled: Boolean = configuration.getBoolean(s"govuk-tax.$env.isTimeManipulationEnabled").getOrElse(false)
+  override def epayeLandpRampUpPercentage: Int = configuration.getInt(s"govuk-tax.$env.epaye.landp.rampUpPercentage").getOrElse(100)
+  override def epayeRelease3RampUpPercentage: Int = configuration.getInt(s"govuk-tax.$env.epaye.release3.rampUpPercentage").getOrElse(0)
+  override def epayeRelease4RampUpPercentage: Int = configuration.getInt(s"govuk-tax.$env.epaye.release4.rampUpPercentage").getOrElse(0)
+  override def epayeUseOdsApi = configuration.getBoolean(s"govuk-tax.$env.epaye.useOdsApi").getOrElse(true)
+  override def enableLanguageSwitching = configuration.getBoolean(s"govuk-tax.$env.enableLanguageSwitching").getOrElse(false)
+  override lazy val ssoUrl = loadConfig(s"govuk-tax.$env.portal.ssoUrl")
+  override def videoSurveyBannerUrl = configuration.getString(s"govuk-tax.$env.video.surveyBanner.url")
 }

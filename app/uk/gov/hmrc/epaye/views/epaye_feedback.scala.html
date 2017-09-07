@@ -1,0 +1,187 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.play.views.html.helpers
+@import controllers.EpayeFeedbackForm.Fields
+
+@(form: Form[EpayeFeedbackForm], surveyName: String)(implicit request: Request[_], lang: Lang, messages: Messages)
+
+@javascript = {
+
+@helper.requireJs(
+    core = routes.Assets.versioned("javascripts/require.js").url,
+    module = routes.Assets.versioned("javascripts/app/exit_survey").url,
+    productionFolderPrefix = ""
+)
+}
+
+@hideToggle(name: String) = {
+    data-dynamic-field-toggle data-dynamic-fields-hide="@name"
+}
+@showToggle(name: String)  = {
+    data-dynamic-field-toggle data-dynamic-fields-show="@name"
+}
+
+
+@hideOtherTasks = {
+    @hideToggle(Fields.otherTaskWas)
+}
+@showOtherTasks = {
+    @showToggle(Fields.otherTaskWas)
+}
+
+@hideMajorProblems = {
+    @hideToggle(Fields.majorProblemsEncountered)
+}
+@showMajorProblems = {
+    @showToggle(Fields.majorProblemsEncountered)
+}
+
+@mainContent = {
+    @if(surveyName.startsWith(EpayeFeedbackSurveys.ExitSurvey)) {
+        <header><h1 class="bold-large">You're signed out</h1></header>
+        <p><a href="/logged-out-testing/login">Sign back in to Business tax account</a></p>
+    }
+    <h2 style="margin-top:2em !important">@Messages("epaye.feedback.leave_feedback")</h2>
+    <p>@Html(Messages(
+        "epaye.feedback.get_help_for_response",
+        s"""<a href="${routes.HelpAndContactController.helpAndContact()}">""",
+        """</a>"""
+    ))</p>
+
+@helpers.form(
+    action = controllers.routes.EpayeFeedbackController.submitFeedback(surveyName),
+    'id -> "form-end-journey-questionnaire",
+    Symbol("data-dynamic-form") -> "true",
+    'class -> "form js-form"
+) {
+    <!-- PROMPT 1 -->
+        <div class="column-full-width">
+            <h3 class="heading-medium">@Messages("epaye.feedback.what_was_your_main_aim")</h3>
+            <fieldset class="form-field-group form-field--tall">
+                <label class="block-label block-label-stacked " for="reason-payment">
+                    <input type="radio" id="reason-payment" name="@Fields.whatWasYourMainTask" value="pay-a-bill" @hideOtherTasks />
+                    @Messages("epaye.feedback.pay_a_bill")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-annualstatements">
+                    <input type="radio" id="reason-annualstatements" name="@Fields.whatWasYourMainTask" value="view-annual-statements" @hideOtherTasks />
+                    @Messages("epaye.feedback.view_annual_statements")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-support">
+                    <input type="radio" id="reason-support" name="@Fields.whatWasYourMainTask" value="get-information" @hideOtherTasks />
+                    @Messages("epaye.feedback.get_information")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-messages">
+                    <input type="radio" id="reason-messages" name="@Fields.whatWasYourMainTask" value="read-messages" @hideOtherTasks />
+                    @Messages("epaye.feedback.read_messages")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-reference" data-target="tax-list">
+                    <input type="radio" id="reason-reference" name="@Fields.whatWasYourMainTask" value="find-a-reference-number" @hideOtherTasks />
+                    @Messages("epaye.feedback.find_a_reference_number")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-penalty" data-target="tax-list">
+                    <input type="radio" id="reason-penalty" name="@Fields.whatWasYourMainTask" value="appeal-a-penalty" @hideOtherTasks />
+                    @Messages("epaye.feedback.appeal_a_penalty")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-refunds" data-target="claim_refunds">
+                    <input type="radio" id="reason-refunds" name="@Fields.whatWasYourMainTask" value="claim-a-refund" @hideOtherTasks />
+                    @Messages("epaye.feedback.claim_a_refund")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-breakdown">
+                    <input type="radio" id="reason-breakdown" name="@Fields.whatWasYourMainTask" value="view-breakdown-of-charges" @hideOtherTasks />
+                    @Messages("epaye.feedback.view_breakdown_of_charges")
+                </label>
+                <label class="block-label block-label-stacked " for="reason-other" data-target="other-text">
+                    <input type="radio" id="reason-other" name="@Fields.whatWasYourMainTask" value="other-task" @showOtherTasks />
+                    @Messages("epaye.feedback.other_task")
+                </label>
+            </fieldset>
+
+            <fieldset class="dynamically-displayed js-hidden data-@Fields.otherTaskWas section">
+                <label class="form-label-bold" for="reason-other-explanation">
+                @Messages("epaye.feedback.what_was_it")
+                </label>
+                <input class="form-control" id="reason-other-explanation" name="@Fields.otherTaskWas" maxlength="100" />
+                <div class="font-xsmall" style="margin-top:10px">@Messages("epaye.feedback.max_100_characters")</div>
+            </fieldset>
+
+            <h3 class="heading-medium">@Messages("epaye.feedback.were_you_able_to_do_it")</h3>
+            <fieldset class="inline">
+                <legend class="visuallyhidden">@Messages("epaye.feedback.were_you_able_to_do_it")</legend>
+
+                <label class="block-label " for="get-done-yes">
+                    <input type="radio" id="get-done-yes" name="@Fields.wereYouAbleToDoIt" value="true" @hideMajorProblems />
+                    @Messages("epaye.feedback.yes")
+                </label>
+                <label class="block-label  " for="get-done-no" data-target="not-done-tax">
+                    <input type="radio" id="get-done-no" name="@Fields.wereYouAbleToDoIt" value="false" @showMajorProblems />
+                    @Messages("epaye.feedback.no")
+                </label>
+
+            </fieldset>
+
+            <fieldset class="dynamically-displayed js-hidden data-@Fields.majorProblemsEncountered">
+                <label class="form-label-bold" for="reason-other-explanation">
+                @Messages("epaye.feedback.what_major_problems_have_you_encountered")
+                </label>
+                <textarea cols="67" rows="8" maxlength="1000" name="@Fields.majorProblemsEncountered"></textarea>
+                <div class="font-xsmall" style="margin-top:10px">@Messages("epaye.feedback.max_1000_characters")</div>
+            </fieldset>
+
+            <br>
+            <h2 class="bold-medium">@Messages("epaye.feedback.how_did_you_feel_about_the_service_received")</h2>
+
+            <fieldset>
+                <label class="block-label block-label-stacked " for="difficulty-radio-very-difficult" data-target="V_dissatisfied_">
+                    <input type="radio" id="difficulty-radio-very-difficult" name="@Fields.howDidYouFeelAboutTheService" value="5" data-toggle-show="reasonWhyDissatisfied" aria-controls="V_dissatisfied_" />
+                    @Messages("epaye.feedback.very_dissatisfied")
+                </label>
+                <label class="block-label block-label-stacked " for="difficulty-radio-difficult" data-target="dissatisfied_">
+                    <input type="radio" id="difficulty-radio-difficult" name="@Fields.howDidYouFeelAboutTheService" value="4" data-toggle-show="reasonWhyDissatisfied" aria-controls="dissatisfied_" />
+                    @Messages("epaye.feedback.dissatisfied")
+                </label>
+                <label class="block-label block-label-stacked " for="difficulty-radio-neutral" data-target="Neither">
+                    <input type="radio" id="difficulty-radio-neutral" name="@Fields.howDidYouFeelAboutTheService" value="3" data-toggle-hide="reasonWhyDissatisfied" aria-controls="Neither" />
+                    @Messages("epaye.feedback.neither_satisfied_nor_dissatisfied")
+                </label>
+                <label class="block-label block-label-stacked " for="difficulty-radio-easy" data-target="satisfied">
+                    <input type="radio" id="difficulty-radio-easy" name="@Fields.howDidYouFeelAboutTheService" value="2" data-toggle-hide="reasonWhyDissatisfied" aria-controls="satisfied" />
+                    @Messages("epaye.feedback.satisfied")
+                </label>
+                <label class="block-label block-label-stacked " for="difficulty-radio-very-easy" data-target="V_satisfied">
+                    <input type="radio" id="difficulty-radio-very-easy" name="@Fields.howDidYouFeelAboutTheService" value="1" data-toggle-hide="reasonWhyDissatisfied" aria-controls="V_satisfied" />
+                    @Messages("epaye.feedback.very_satisfied")
+                </label>
+            </fieldset>
+            <br /> <br />
+            <h2 class="bold-medium">@Messages("epaye.feedback.how_can_we_improve")</h2>
+            <p><textarea cols="67" rows="8" maxlength="2500" name="@Fields.howCanWeImprove"></textarea></p>
+            <div class="font-xsmall" style="margin-top:-15px">@Messages("epaye.feedback.max_2500_characters")</div>
+            <p></p>
+            <br />
+            <input id="submit-survey-button" type="submit" class="button" value="@Messages("epaye.feedback.submit")" data-journey-click="epaye:feedback:Click:Submit" />
+        </div>
+    }
+}
+
+@govuk_wrapper(appConfig = playconfig.BTAConfig,
+    title = Messages("epaye.feedback.title"),
+    mainClass = Some("full-width"),
+    mainContent = mainContent,
+    showHeaderNavLinks = false,
+    scriptElem = Some(javascript)
+)
+

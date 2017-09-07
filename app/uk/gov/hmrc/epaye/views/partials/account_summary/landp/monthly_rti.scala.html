@@ -1,0 +1,37 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.models.domain._
+
+@(rtiCharges: Seq[RtiCharge])(implicit userProfile: uk.gov.hmrc.epaye.connectors.UserProfile, messages: Messages)
+
+@if(rtiCharges.nonEmpty) {
+    @for((rtiCharge, index) <- rtiCharges.zipWithIndex) {
+        @rtiCharge match {
+            case credit: RtiMonthCredit => { @monthly_rti_credit(credit, index) }
+            case debit: RtiMonthDebit => { @monthly_rti_debit(debit, index) }
+            case overdue: RtiMonthOverdue => { @monthly_rti_overdue(overdue, index) }
+            case credit: SpecifiedRtiMonthCredit => { @monthly_specified_rti_credit(credit, index) }
+            case debit: SpecifiedRtiMonthDebit => { @monthly_specified_rti_debit(debit, index) }
+            case overdue: SpecifiedRtiMonthOverdue => { @monthly_specified_rti_overdue(overdue, index) }
+            case credit: EarlierYearUpdateCredit => { @eyu_credit(credit) }
+            case debit: EarlierYearUpdateDebit => { @eyu_bill_not_overdue(debit) }
+            case overdue: EarlierYearUpdateOverdue => { @eyu_bill_overdue(overdue) }
+            case _ => {}
+        }
+    }
+}
+

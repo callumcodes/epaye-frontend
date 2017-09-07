@@ -1,0 +1,96 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.helpers.EpayeHelper.renderEpayeBalance
+@import views.html.helpers.EpayeHelper.renderYearEndPartial
+@import views.html.helpers.EpayeHelper.renderBreakdownSection
+@import views.html.helpers.EpayeHelper.renderPayYourP11dPartial
+@import services.EpayeLandpModel
+@import org.joda.time.DateTime
+@import urls.PaymentsUrlBuilder
+
+@import views.html.partials.account_summary.no_data
+@import connector.UserProfile
+
+@(epayeLandpModelOpt: Option[EpayeLandpModel], accountSummaryOpt: Option[connector.EpayeAccountSummary], currentDateTime: DateTime, showSubpageLink: Boolean)(implicit userProfile: UserProfile, authContext : uk.gov.hmrc.play.frontend.auth.AuthContext,
+        lang: Lang, messages: Messages)
+
+<ul class="flush--bottom">
+    @epayeLandpModelOpt.map { model =>
+        @model.appLevyInterestCharges.sortWith((c1, c2) => c1.dueDate.isBefore(c2.dueDate)).zipWithIndex.map { case (charge, idx) =>
+        <div class="panel-indent panel-indent--gutter alert--failure soft--right epaye-app-levy-interest">
+            <div class="grid-layout grid-layout--stacked flush--bottom flush--left">
+                <div class="grid-layout grid-layout--stacked flush--bottom flush--left">
+                    <div class="grid-layout__column grid-layout__column--3-4 flush--bottom">
+                        <p id="@{s"epaye-app-levy-interest-charge-$idx"}" class="flush--bottom alert alert--borderless  soft--left  soft-half--ends panel">
+                            <strong>@Messages("epaye.app.levy.interest.charge", charge.amount)</strong>
+                        </p
+                        <p id="@{s"epaye-app-levy-interest-late-$idx"}">@Messages("epaye.app.levy.interest.late")</p>
+                    </div>
+                    <div class="grid-layout__column grid-layout__column--1-4">
+                        <p id="@{s"epaye-app-levy-interest-due-$idx"}" class="soft--right">
+                            <strong class="bold-xsmall">@Messages("epaye.app.levy.interest.due", charge.dueDate.toString("dd MMMM"))</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <p>
+                <a id="@{s"epaye-app-levy-interest-pay-$idx"}" class="button--secondary" href="@controllers.routes.EpayeController.payCharge(charge.reference)"
+                data-journey-click="EPAYE-NEW:click:payInterest" data-sso="false">@Messages("epaye.app.levy.interest.pay")</a>
+        </p>
+        </div>
+        }
+    }
+
+@renderYearEndPartial(currentDateTime)
+
+@accountSummaryOpt match {
+    case Some(accountSummary) => {
+        @defining(epayeLandpModelOpt.exists(m => m.appLevyOutstandingAmount > 0 || m.appLevyInterestCharges.nonEmpty)) { hasAppLevyCharges =>
+            @renderEpayeBalance(accountSummary, currentDateTime, epayeLandpModelOpt, hasAppLevyCharges)
+            @renderBreakdownSection(currentDateTime, accountSummary, hasAppLevyCharges)
+        }
+    }
+    case _ => {
+        @no_data()
+    }
+}
+
+@** YTA-2779: Only show app levy info if we actually have an account summary. **@
+@helpers.renderAppLevyCharges(accountSummaryOpt, epayeLandpModelOpt)
+
+
+<li class="section__li">
+    <a id="epaye-make-payment-link"
+    href="@{PaymentsUrlBuilder.fullUrlForEPayeMakeAPaymentPage}"
+    data-journey-click="epaye:Click:Make an Employers PAYE payment"
+    data-sso="false"
+    class="button--secondary flush--bottom@if(accountSummaryOpt.exists(_.rti.exists(_.balance != 0))){ flush--top}">
+    @Html(Messages("epaye.link.message.accountSummary.makeAPayment","<span class=\"visuallyhidden\">","</span>"))
+    </a>
+</li>
+
+@renderPayYourP11dPartial(currentDateTime)
+
+@if(showSubpageLink) {
+    <li class="section__li details-link">
+        <a id="epaye-account-details-link"
+            href="@controllers.routes.EpayeController.subpage"
+            data-journey-click="EPAYE:click:PAYE for employers overview"
+            class="enrolment-link">@Messages("epaye.account.details.link.text")</a>
+    </li>
+}
+</ul>

@@ -1,0 +1,39 @@
+@*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.epaye.views.html.partials
+@import uk.gov.hmrc.epaye.models.domain._
+@(
+    heading: Html,
+    content: Html,
+    dueDate: DueDate,
+    button: Html
+)(implicit m: Messages)
+
+<li class="section__li tax-grouping interest">
+    <div class="panel-indent panel-indent--gutter alert--failure soft--bottom soft--right" style="border-left-width:4px">
+        <div class="grid-layout grid-layout--stacked flush--bottom flush--left spacing--bottom">
+            <div class="grid-layout__column grid-layout__column--3-4 flush--bottom">
+                @heading
+                @content
+            </div>
+            <div class="grid-layout__column grid-layout__column--1-4">
+                @partials.dueDate(dueDate, showBar = false)
+            </div>
+        </div>
+        @button
+    </div>
+</li>
